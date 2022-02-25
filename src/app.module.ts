@@ -7,12 +7,11 @@ import { RtGuard } from './common/guards/rt.guard';
 
 @Module({
   imports: [AuthModule, PrismaModule],
-
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AtGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: AtGuard,
+    // },
   ],
 })
 export class AppModule {}

@@ -4,6 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -16,6 +17,7 @@ import {
   GetCurrentuserId,
   Public,
 } from 'src/common/decorators';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -31,7 +33,12 @@ export class AuthController {
   @Public()
   @Post('local/signin')
   @HttpCode(HttpStatus.OK)
-  signinLocal(@Body() dto: AuthDto): Promise<Tokens> {
+  signinLocal(
+    @Body() dto: AuthDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<Tokens> {
+    console.log(this.authService.signinLocal(dto));
+    response.cookie('jwt', 'tttteeeesssstttt', { httpOnly: true });
     return this.authService.signinLocal(dto);
   }
 
@@ -42,7 +49,6 @@ export class AuthController {
     this.authService.logout(userId);
   }
 
-  @Public()
   @UseGuards(RtGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
@@ -51,5 +57,18 @@ export class AuthController {
     @GetCurrentuser('refreshToken') refreshToken: string,
   ) {
     return this.authService.refreshTokens(userId, refreshToken);
+  }
+
+  @UseGuards(AtGuard)
+  @Post('atGuardTest')
+  atGuardTest() {
+    return 'AtGuard test';
+  }
+
+  //@UseGuards(RtGuard)
+  @Post('test')
+  test(@Res({ passthrough: true }) response: Response) {
+    response.cookie('jwt', 'tttteeeesssstttt', { httpOnly: true });
+    return 'test';
   }
 }
